@@ -13,9 +13,22 @@ dotenv.config();
 const app  = express();
 const PORT = process.env.PORT || 4000;
 
+const ALLOWED_ORIGINS = [
+  "http://localhost:5173",
+  "https://steellarhealth-in7c.vercel.app",
+];
+
 // ── Middleware ────────────────────────────────────────────────────────────────
 app.use(helmet());
-app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173", credentials: true }));
+app.use(cors({
+  origin(origin, callback) {
+    // Allow non-browser requests (curl/postman/server-to-server)
+    if (!origin) return callback(null, true);
+    if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+    return callback(new Error("Origin not allowed by CORS"));
+  },
+  credentials: true,
+}));
 app.use(express.json());
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200, message: "Too many requests" }));
 
