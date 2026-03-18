@@ -1,0 +1,73 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #F0F4F8;
+  --bg2:      #E4EBF3;
+  --surface:  #FFFFFF;
+  --card:     #FFFFFF;
+  --navy:     #0A1628;
+  --navy2:    #132040;
+  --teal:     #00B4D8;
+  --teal2:    #0096B7;
+  --teal-lt:  #E0F7FC;
+  --green:    #00C48C;
+  --green-lt: #E0FAF3;
+  --red:      #E63946;
+  --red-lt:   #FEE8EA;
+  --amber:    #F4A261;
+  --amber-lt: #FEF3E2;
+  --blue:     #3E8EFF;
+  --border:   #D1DCE8;
+  --border2:  #B8C8D8;
+  --text:     #0A1628;
+  --text2:    #3A4A5C;
+  --muted:    #6B7A8D;
+  --stellar:  #3E8EFF;
+}
+
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+code, .mono { font-family: 'IBM Plex Mono', monospace; }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* animations */
+@keyframes spin    { to { transform: rotate(360deg); } }
+@keyframes fadeUp  { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+@keyframes slideR  { from { opacity:0; transform:translateX(12px); } to { opacity:1; transform:translateX(0); } }
+@keyframes pulse   { 0%,100% { opacity:1; } 50% { opacity:.5; } }
+@keyframes scanline {
+  0%   { top: -4px; }
+  100% { top: 100%; }
+}
+
+.fade-up  { animation: fadeUp .3s ease both; }
+.slide-r  { animation: slideR .25s ease both; }
+
+/* spinner */
+.spin { width:16px; height:16px; border:2px solid var(--border2); border-top-color:var(--teal); border-radius:50%; animation:spin .7s linear infinite; flex-shrink:0; }
+
+/* inputs */
+input, select, textarea { font-family:'IBM Plex Sans', sans-serif; }
+input::placeholder, textarea::placeholder { color: var(--muted); }
+button { font-family:'IBM Plex Sans', sans-serif; cursor:pointer; transition:all .15s; }
+button:hover:not(:disabled) { filter:brightness(.95); transform:translateY(-1px); }
+button:disabled { opacity:.5; cursor:not-allowed; transform:none !important; }
+a { color:var(--teal); text-decoration:none; }
+a:hover { text-decoration:underline; }
+select option { background: white; }
+
+/* utility */
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
