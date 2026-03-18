@@ -39,11 +39,15 @@ app.use("/api/patients", patientRoutes);
 app.get("/api/health", (_, res) => res.json({ status: "ok", service: "StellarHealthRecord API", network: process.env.STELLAR_NETWORK || "TESTNET" }));
 
 // ── DB + Start ────────────────────────────────────────────────────────────────
-const MONGO = process.env.MONGO_URI || "mongodb://localhost:27017/stellar-health";
+const isProdLike = Boolean(process.env.VERCEL) || process.env.NODE_ENV === "production";
+const MONGO = process.env.MONGO_URI || (!isProdLike ? "mongodb://localhost:27017/stellar-health" : null);
 
 let connectPromise;
 
 export function ensureDbConnection() {
+  if (!MONGO) {
+    return Promise.reject(new Error("MONGO_URI is required in Vercel/production environment"));
+  }
   if (mongoose.connection.readyState === 1) return Promise.resolve();
   if (!connectPromise) {
     connectPromise = mongoose.connect(MONGO).then(() => {
