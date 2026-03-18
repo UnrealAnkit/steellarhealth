@@ -13,9 +13,24 @@ async function req(method, path, body) {
     },
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Request failed");
-  return data;
+
+  // Some endpoints or failures may return empty/non-JSON bodies.
+  const text = await res.text();
+  let data = null;
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = null;
+    }
+  }
+
+  if (!res.ok) {
+    const message = (data && data.error) || text || `Request failed (${res.status})`;
+    throw new Error(message);
+  }
+
+  return data ?? {};
 }
 
 export const api = {
