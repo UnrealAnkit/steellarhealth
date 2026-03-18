@@ -28,9 +28,27 @@ app.get("/api/health", (_, res) => res.json({ status: "ok", service: "StellarHea
 // ── DB + Start ────────────────────────────────────────────────────────────────
 const MONGO = process.env.MONGO_URI || "mongodb://localhost:27017/stellar-health";
 
-mongoose.connect(MONGO)
-  .then(() => {
-    console.log("✓ MongoDB connected");
-    app.listen(PORT, () => console.log(`✓ API running → http://localhost:${PORT}`));
-  })
-  .catch(e => { console.error("✗ MongoDB connection failed:", e.message); process.exit(1); });
+let connectPromise;
+
+export function ensureDbConnection() {
+  if (mongoose.connection.readyState === 1) return Promise.resolve();
+  if (!connectPromise) {
+    connectPromise = mongoose.connect(MONGO).then(() => {
+      console.log("✓ MongoDB connected");
+    });
+  }
+  return connectPromise;
+}
+
+if (!process.env.VERCEL) {
+  ensureDbConnection()
+    .then(() => {
+      app.listen(PORT, () => console.log(`✓ API running → http://localhost:${PORT}`));
+    })
+    .catch(e => {
+      console.error("✗ MongoDB connection failed:", e.message);
+      process.exit(1);
+    });
+}
+
+export default app;
